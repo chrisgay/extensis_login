@@ -50,37 +50,51 @@ public class GettingStarted
 
         System.out.println(catalogs.size() + " catalog(s) available.");
         for (Catalog catalog : catalogs) {
-            System.out.println("  " + catalog.getName());
+            System.out.println("Catalog Name: " + catalog.getName());
+            System.out.println("Status: " + catalog.getStatus());
         }
 
         System.out.println();
-
+        
         // Get some information about assets in the first catalog.
         AssetQuery assetQuery = new AssetQuery();
         AssetQueryResultOptions resultOptions = new AssetQueryResultOptions();
-	
-
-        // Ask Portfolio to return Filename, Directory Path, and Cataloged date-time information 
+        
+        // Create full query of catalog
+        AssetQuery fullQuery = new AssetQuery();
+        AssetQueryResultOptions allOptions = new AssetQueryResultOptions();
+        
+        // Ask Portfolio to return Filename, Directory Path, and Cataloged date-time information
         // for the first 5 assets in the catalog.
         resultOptions.setPageSize(5);
         resultOptions.getFieldNames().add("Filename");
         resultOptions.getFieldNames().add("Directory Path");
+        resultOptions.getFieldNames().add("Keywords");
+        resultOptions.getFieldNames().add("CM - Topic");
         resultOptions.getFieldNames().add("Cataloged");
 
         // Sort the results by the date/time they were cataloged.
         SortOptions sortOptions = new SortOptions();
         assetQuery.setSortOptions(sortOptions);
-	sortOptions.setSortFieldName("Cataloged");
+        sortOptions.setSortFieldName("Cataloged");
         sortOptions.setSortOrderAscending(false); // Most recently cataloged items first.
 
-        AssetQueryResults results = service.getAssets(sessionId, catalogs.get(0).getCatalogId(), assetQuery, resultOptions);
+        AssetQueryResults results = service.getAssets(sessionId, catalogs.get(1).getCatalogId(), assetQuery, resultOptions);
         System.out.println("Retrieved " + results.getAssets().size() + " out of a total of " + results.getTotalNumberOfAssets() + " assets.");
         for (Asset asset : results.getAssets()) {
-            System.out.println();
             System.out.println("  Filename: " + getAttributeValue("Filename", asset));
             System.out.println("  Directory Path: " + getAttributeValue("Directory Path", asset));
+            System.out.println("  Keywords: " + getAttributeValue("Keywords", asset));
+            System.out.println("  CM - Topic: " + getAttributeValue("CM - Topic", asset));
             System.out.println("  Cataloged: " + getAttributeValue("Cataloged", asset));
+            System.out.println("--------------------------------------");
+
         }
+        
+        
+        // Print fullQuery
+        // fullQuery.getFieldDefinitions(sessionId, catalogs.get(1).getCatalogId());
+        // System.out.println(fullQuery);
 
         // When you are finished with the Portfolio server, close the session
         // by passing the Session ID to the logout method.
